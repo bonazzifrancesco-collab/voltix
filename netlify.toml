@@ -10,3 +10,13 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# Aumenta timeout per le funzioni AI (max 26 secondi su piano gratuito)
+[functions."analisi-mercato"]
+  timeout = 26
+
+[functions."analyze-bill"]
+  timeout = 26
+
+[functions."fetch-pun"]
+  timeout = 26
