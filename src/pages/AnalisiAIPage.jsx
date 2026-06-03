@@ -69,7 +69,7 @@ export default function AnalisiAIPage() {
     }
 
     try {
-      const res = await fetch('/.netlify/functions/analisi-mercato', {
+      const res = await fetch('/api/analisi-mercato', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(inputDati)
