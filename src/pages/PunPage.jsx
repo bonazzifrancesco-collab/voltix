@@ -30,7 +30,7 @@ export default function PunPage() {
     setFetching(true)
     setFetchLog('Contatto Netlify Function per fetch GME...')
     try {
-      const res = await fetch('/.netlify/functions/fetch-pun')
+      const res = await fetch('/api/fetch-pun')
       if (!res.ok) throw new Error(`Errore server: ${res.status}`)
       const result = await res.json()
       if (result.error) throw new Error(result.error)
