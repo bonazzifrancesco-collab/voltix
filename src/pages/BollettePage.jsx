@@ -76,7 +76,7 @@ export default function BollettePage() {
     try {
       const base64 = await fileToBase64(pdfFile)
       setAiLog('Invio a Claude AI per analisi...')
-      const res = await fetch('/.netlify/functions/analyze-bill', {
+      const res = await fetch('/api/analyze-bill', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pdfBase64: base64 })
