@@ -7,6 +7,7 @@ import BollettePage from './pages/BollettePage'
 import ConsumiPage from './pages/ConsumiPage'
 import PunPage from './pages/PunPage'
 import AnalisiAIPage from './pages/AnalisiAIPage'
+import SimulatorePage from './pages/SimulatorePage'
 import ImpostazioniPage from './pages/ImpostazioniPage'
 
 function ProtectedRoute({ children }) {
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="bollette" element={<BollettePage />} />
             <Route path="consumi" element={<ConsumiPage />} />
             <Route path="pun" element={<PunPage />} />
+            <Route path="simulatore" element={<SimulatorePage />} />
             <Route path="analisi" element={<AnalisiAIPage />} />
             <Route path="impostazioni" element={<ImpostazioniPage />} />
           </Route>
