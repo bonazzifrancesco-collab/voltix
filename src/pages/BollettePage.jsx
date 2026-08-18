@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { formatEuro, formatDate } from '../lib/utils'
@@ -121,14 +121,17 @@ export default function BollettePage() {
     })
   }
 
-  function autoCalcTotale() {
-    const f1 = parseFloat(form.kwh_f1) || 0
-    const f2 = parseFloat(form.kwh_f2) || 0
-    const f3 = parseFloat(form.kwh_f3) || 0
-    if (f1 + f2 + f3 > 0) {
-      setForm(prev => ({ ...prev, kwh_totale: (f1 + f2 + f3).toFixed(3) }))
-    }
-  }
+  const autoCalcTotale = useCallback(() => {
+    setForm(prev => {
+      const f1 = parseFloat(prev.kwh_f1) || 0
+      const f2 = parseFloat(prev.kwh_f2) || 0
+      const f3 = parseFloat(prev.kwh_f3) || 0
+      if (f1 + f2 + f3 > 0) {
+        return { ...prev, kwh_totale: (f1 + f2 + f3).toFixed(3) }
+      }
+      return prev
+    })
+  }, [])
 
   async function save() {
     if (!form.fornitore || !form.periodo_inizio || !form.periodo_fine || !form.importo_totale) {
