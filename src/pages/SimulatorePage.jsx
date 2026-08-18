@@ -108,6 +108,49 @@ function calcolaCosto(offerta, sim, pun_medio = 0) {
   }
 }
 
+
+// ── Componente ARERA separato per evitare re-render sul main ──
+function ARERAEditor({ simSel, onSave }) {
+  const [localVals, setLocalVals] = useState({
+    quota_fissa_trasporto: simSel.quota_fissa_trasporto ?? ARERA_DEFAULT.quota_fissa_trasporto,
+    quota_potenza_trasporto: simSel.quota_potenza_trasporto ?? ARERA_DEFAULT.quota_potenza_trasporto,
+    quota_fissa_oneri: simSel.quota_fissa_oneri ?? ARERA_DEFAULT.quota_fissa_oneri,
+    accise_kwh: simSel.accise_kwh ?? ARERA_DEFAULT.accise_kwh,
+    canone_rai_annuo: simSel.canone_rai_annuo ?? ARERA_DEFAULT.canone_rai_annuo,
+    iva_percentuale: simSel.iva_percentuale ?? ARERA_DEFAULT.iva_percentuale,
+  })
+
+  const campi = [
+    { label: 'Quota fissa trasporto (€/anno)', key: 'quota_fissa_trasporto' },
+    { label: 'Quota potenza trasporto (€/kW/anno)', key: 'quota_potenza_trasporto' },
+    { label: 'Quota fissa oneri sistema (€/anno)', key: 'quota_fissa_oneri' },
+    { label: 'Accise (€/kWh)', key: 'accise_kwh' },
+    { label: 'Canone RAI (€/anno)', key: 'canone_rai_annuo' },
+    { label: 'IVA %', key: 'iva_percentuale' },
+  ]
+
+  return (
+    <div style={{ marginTop: 16, padding: '16px', background: 'var(--bg-elevated)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+      <div className="form-section-title" style={{ marginBottom: 12 }}>Tariffe ARERA — modifica se necessario</div>
+      <div className="form-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
+        {campi.map(({ label, key }) => (
+          <div className="form-group" key={key}>
+            <label className="form-label" style={{ fontSize: '0.58rem' }}>{label}</label>
+            <input
+              className="form-input"
+              type="number"
+              step="0.0001"
+              value={localVals[key]}
+              onChange={e => setLocalVals(prev => ({ ...prev, [key]: e.target.value }))}
+              onBlur={e => onSave(key, parseFloat(e.target.value))}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function SimulatorePage() {
   const { user } = useAuth()
   const [simulazioni, setSimulazioni] = useState([])
@@ -346,31 +389,10 @@ export default function SimulatorePage() {
 
             {/* Tariffe ARERA espandibili */}
             {showARERA && (
-              <div style={{ marginTop: 16, padding: '16px', background: 'var(--bg-elevated)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
-                <div className="form-section-title" style={{ marginBottom: 12 }}>Tariffe ARERA — modifica se necessario</div>
-                <div className="form-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
-                  {[
-                    { label: 'Quota fissa trasporto (€/anno)', key: 'quota_fissa_trasporto' },
-                    { label: 'Quota potenza trasporto (€/kW/anno)', key: 'quota_potenza_trasporto' },
-                    { label: 'Quota fissa oneri sistema (€/anno)', key: 'quota_fissa_oneri' },
-                    { label: 'Accise (€/kWh)', key: 'accise_kwh' },
-                    { label: 'Canone RAI (€/anno)', key: 'canone_rai_annuo' },
-                    { label: 'IVA %', key: 'iva_percentuale' },
-                  ].map(({ label, key }) => (
-                    <div className="form-group" key={key}>
-                      <label className="form-label" style={{ fontSize: '0.58rem' }}>{label}</label>
-                      <input className="form-input" type="number" step="0.0001"
-                        value={simSel[key] ?? ARERA_DEFAULT[key]}
-                        onChange={async e => {
-                          const val = parseFloat(e.target.value)
-                          const updated = { ...simSel, [key]: val }
-                          setSimSel(updated)
-                          await supabase.from('simulazioni').update({ [key]: val }).eq('id', simSel.id)
-                        }} />
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ARERAEditor simSel={simSel} onSave={async (key, val) => {
+                setSimSel(prev => ({ ...prev, [key]: val }))
+                await supabase.from('simulazioni').update({ [key]: val }).eq('id', simSel.id)
+              }} />
             )}
           </div>
 
