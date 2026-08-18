@@ -10,5 +10,11 @@
     "api/*.js": {
       "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/send-reminder",
+      "schedule": "0 7 * * *"
+    }
+  ]
 }
