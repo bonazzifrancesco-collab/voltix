@@ -14,6 +14,24 @@ const EMPTY_FORM = {
   inserita_manualmente: true
 }
 
+// Componente Field estratto fuori per evitare re-render ad ogni keystroke
+function Field({ label, name, type = 'text', step, placeholder, hint, form, setForm, onBlur }) {
+  return (
+    <div className="form-group">
+      <label className="form-label">{label}{hint && <span className="text-muted" style={{ fontWeight: 400 }}> ({hint})</span>}</label>
+      <input
+        className="form-input"
+        type={type}
+        step={step}
+        placeholder={placeholder}
+        value={form[name] ?? ''}
+        onChange={e => setForm(prev => ({ ...prev, [name]: e.target.value }))}
+        onBlur={onBlur}
+      />
+    </div>
+  )
+}
+
 export default function BollettePage() {
   const { user } = useAuth()
   const [bollette, setBollette] = useState([])
@@ -163,20 +181,7 @@ export default function BollettePage() {
     loadBollette()
   }
 
-  const Field = ({ label, name, type = 'text', step, placeholder, hint }) => (
-    <div className="form-group">
-      <label className="form-label">{label}{hint && <span className="text-muted" style={{ fontWeight: 400 }}> ({hint})</span>}</label>
-      <input
-        className="form-input"
-        type={type}
-        step={step}
-        placeholder={placeholder}
-        value={form[name] ?? ''}
-        onChange={e => setForm(prev => ({ ...prev, [name]: e.target.value }))}
-        onBlur={['kwh_f1', 'kwh_f2', 'kwh_f3'].includes(name) ? autoCalcTotale : undefined}
-      />
-    </div>
-  )
+
 
   return (
     <div className="flex-col gap-20">
@@ -338,10 +343,10 @@ export default function BollettePage() {
                   <div>
                     <div className="form-section-title">Fornitore & Identificativi</div>
                     <div className="form-grid mt-16">
-                      <Field label="Fornitore *" name="fornitore" placeholder="es. Enel Energia" />
-                      <Field label="Nome Offerta" name="nome_offerta" placeholder="es. Semplice Luce" />
-                      <Field label="POD" name="pod" placeholder="IT001E..." />
-                      <Field label="N° Bolletta" name="numero_bolletta" />
+                      <Field label="Fornitore *" name="fornitore" placeholder="es. Enel Energia"  form={form} setForm={setForm} />
+                      <Field label="Nome Offerta" name="nome_offerta" placeholder="es. Semplice Luce"  form={form} setForm={setForm} />
+                      <Field label="POD" name="pod" placeholder="IT001E..."  form={form} setForm={setForm} />
+                      <Field label="N° Bolletta" name="numero_bolletta"  form={form} setForm={setForm} />
                     </div>
                   </div>
 
@@ -349,10 +354,10 @@ export default function BollettePage() {
                   <div>
                     <div className="form-section-title">Periodo di Competenza</div>
                     <div className="form-grid mt-16">
-                      <Field label="Data Inizio *" name="periodo_inizio" type="date" />
-                      <Field label="Data Fine *" name="periodo_fine" type="date" />
-                      <Field label="Data Emissione" name="data_emissione" type="date" />
-                      <Field label="Data Scadenza" name="data_scadenza" type="date" />
+                      <Field label="Data Inizio *" name="periodo_inizio" type="date"  form={form} setForm={setForm} />
+                      <Field label="Data Fine *" name="periodo_fine" type="date"  form={form} setForm={setForm} />
+                      <Field label="Data Emissione" name="data_emissione" type="date"  form={form} setForm={setForm} />
+                      <Field label="Data Scadenza" name="data_scadenza" type="date"  form={form} setForm={setForm} />
                     </div>
                   </div>
 
@@ -360,10 +365,10 @@ export default function BollettePage() {
                   <div>
                     <div className="form-section-title">Consumi (kWh)</div>
                     <div className="form-grid mt-16">
-                      <Field label="Fascia F1 (Punta)" name="kwh_f1" type="number" step="0.001" placeholder="0.000" hint="Lun-Ven 8-19" />
-                      <Field label="Fascia F2 (Intermedia)" name="kwh_f2" type="number" step="0.001" placeholder="0.000" hint="Sab + 19-23" />
-                      <Field label="Fascia F3 (Valle)" name="kwh_f3" type="number" step="0.001" placeholder="0.000" hint="Notti + Dom" />
-                      <Field label="Totale kWh" name="kwh_totale" type="number" step="0.001" placeholder="Auto-calcolato" />
+                      <Field label="Fascia F1 (Punta)" name="kwh_f1" type="number" step="0.001" placeholder="0.000" hint="Lun-Ven 8-19"  form={form} setForm={setForm}  onBlur={autoCalcTotale} />
+                      <Field label="Fascia F2 (Intermedia)" name="kwh_f2" type="number" step="0.001" placeholder="0.000" hint="Sab + 19-23"  form={form} setForm={setForm}  onBlur={autoCalcTotale} />
+                      <Field label="Fascia F3 (Valle)" name="kwh_f3" type="number" step="0.001" placeholder="0.000" hint="Notti + Dom"  form={form} setForm={setForm}  onBlur={autoCalcTotale} />
+                      <Field label="Totale kWh" name="kwh_totale" type="number" step="0.001" placeholder="Auto-calcolato"  form={form} setForm={setForm} />
                     </div>
                   </div>
 
@@ -371,10 +376,10 @@ export default function BollettePage() {
                   <div>
                     <div className="form-section-title">Prezzi Materia Energia (€/kWh)</div>
                     <div className="form-grid mt-16">
-                      <Field label="Prezzo F1" name="prezzo_f1" type="number" step="0.000001" placeholder="0.000000" />
-                      <Field label="Prezzo F2" name="prezzo_f2" type="number" step="0.000001" placeholder="0.000000" />
-                      <Field label="Prezzo F3" name="prezzo_f3" type="number" step="0.000001" placeholder="0.000000" />
-                      <Field label="Prezzo Medio" name="prezzo_medio" type="number" step="0.000001" placeholder="0.000000" />
+                      <Field label="Prezzo F1" name="prezzo_f1" type="number" step="0.000001" placeholder="0.000000"  form={form} setForm={setForm} />
+                      <Field label="Prezzo F2" name="prezzo_f2" type="number" step="0.000001" placeholder="0.000000"  form={form} setForm={setForm} />
+                      <Field label="Prezzo F3" name="prezzo_f3" type="number" step="0.000001" placeholder="0.000000"  form={form} setForm={setForm} />
+                      <Field label="Prezzo Medio" name="prezzo_medio" type="number" step="0.000001" placeholder="0.000000"  form={form} setForm={setForm} />
                     </div>
                   </div>
 
@@ -382,12 +387,12 @@ export default function BollettePage() {
                   <div>
                     <div className="form-section-title">Voci di Costo (€)</div>
                     <div className="form-grid mt-16">
-                      <Field label="Materia Prima" name="costo_materia_prima" type="number" step="0.01" />
-                      <Field label="Trasporto e Gestione Rete" name="costo_trasporto" type="number" step="0.01" />
-                      <Field label="Oneri di Sistema" name="costo_oneri_sistema" type="number" step="0.01" />
-                      <Field label="Accise" name="costo_accise" type="number" step="0.01" />
-                      <Field label="IVA" name="costo_iva" type="number" step="0.01" />
-                      <Field label="Importo Totale *" name="importo_totale" type="number" step="0.01" />
+                      <Field label="Materia Prima" name="costo_materia_prima" type="number" step="0.01"  form={form} setForm={setForm} />
+                      <Field label="Trasporto e Gestione Rete" name="costo_trasporto" type="number" step="0.01"  form={form} setForm={setForm} />
+                      <Field label="Oneri di Sistema" name="costo_oneri_sistema" type="number" step="0.01"  form={form} setForm={setForm} />
+                      <Field label="Accise" name="costo_accise" type="number" step="0.01"  form={form} setForm={setForm} />
+                      <Field label="IVA" name="costo_iva" type="number" step="0.01"  form={form} setForm={setForm} />
+                      <Field label="Importo Totale *" name="importo_totale" type="number" step="0.01"  form={form} setForm={setForm} />
                     </div>
                   </div>
 

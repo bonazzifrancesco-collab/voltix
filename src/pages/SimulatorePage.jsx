@@ -109,6 +109,18 @@ function calcolaCosto(offerta, sim, pun_medio = 0) {
 }
 
 
+// Componente FS estratto fuori per evitare re-render
+function FS({ label, name, type = 'number', step = '0.000001', placeholder, hint, formOfferta, setFormOfferta }) {
+  return (
+    <div className="form-group">
+      <label className="form-label">{label}{hint && <span className="text-muted" style={{ fontWeight: 400 }}> ({hint})</span>}</label>
+      <input className="form-input" type={type} step={step} placeholder={placeholder}
+        value={formOfferta[name] ?? ''}
+        onChange={e => setFormOfferta(p => ({ ...p, [name]: e.target.value }))} />
+    </div>
+  )
+}
+
 // ── Componente ARERA separato per evitare re-render sul main ──
 function ARERAEditor({ simSel, onSave }) {
   const [localVals, setLocalVals] = useState({
@@ -300,14 +312,7 @@ export default function SimulatorePage() {
   const peggiore = risultati[risultati.length - 1]
   const risparmioMax = migliore && peggiore ? peggiore.calc.totale - migliore.calc.totale : 0
 
-  const FS = ({ label, name, type = 'number', step = '0.000001', placeholder, hint }) => (
-    <div className="form-group">
-      <label className="form-label">{label}{hint && <span className="text-muted" style={{ fontWeight: 400 }}> ({hint})</span>}</label>
-      <input className="form-input" type={type} step={step} placeholder={placeholder}
-        value={formOfferta[name] ?? ''}
-        onChange={e => setFormOfferta(p => ({ ...p, [name]: e.target.value }))} />
-    </div>
-  )
+
 
   if (loading) return <div className="loading-overlay"><div className="spinner" style={{ width: 28, height: 28 }} /></div>
 
@@ -645,8 +650,8 @@ export default function SimulatorePage() {
               {/* Fornitore */}
               <div className="form-section-title">Fornitore</div>
               <div className="form-grid">
-                <FS label="Fornitore *" name="fornitore" type="text" placeholder="es. Enel Energia" />
-                <FS label="Nome Offerta *" name="nome_offerta" type="text" placeholder="es. Semplice Luce" />
+                <FS label="Fornitore *" name="fornitore" type="text" placeholder="es. Enel Energia"  formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
+                <FS label="Nome Offerta *" name="nome_offerta" type="text" placeholder="es. Semplice Luce"  formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
                 <div className="form-group">
                   <label className="form-label">Tipo Mercato</label>
                   <select className="form-select" value={formOfferta.tipo_mercato}
@@ -679,7 +684,7 @@ export default function SimulatorePage() {
                   <FS label="Prezzo F2 — Intermedia (€/kWh)" name="prezzo_f2" placeholder="0.000000" />
                   <FS label="Prezzo F3 — Valle (€/kWh)" name="prezzo_f3" placeholder="0.000000" />
                 </>)}
-                <FS label="Perdite di Rete (%)" name="perdite_rete_perc" step="0.1" placeholder="10.0" hint="standard ~10%" />
+                <FS label="Perdite di Rete (%)" name="perdite_rete_perc" step="0.1" placeholder="10.0" hint="standard ~10%"  formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
               </div>
 
               {/* Corrispettivi fornitore */}

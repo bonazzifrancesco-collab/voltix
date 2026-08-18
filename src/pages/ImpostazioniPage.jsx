@@ -9,6 +9,20 @@ const EMPTY_CONTRATTO = {
   potenza_impegnata: '3.00', data_inizio: '', data_fine: '', note: ''
 }
 
+// Componente FC estratto fuori per evitare re-render
+function FC({ label, name, type = 'text', step, placeholder, hint, formContratto, setFormContratto }) {
+  return (
+    <div className="form-group">
+      <label className="form-label">{label}{hint && <span className="text-muted" style={{ fontWeight: 400 }}> ({hint})</span>}</label>
+      <input
+        className="form-input" type={type} step={step} placeholder={placeholder}
+        value={formContratto[name] ?? ''}
+        onChange={e => setFormContratto(p => ({ ...p, [name]: e.target.value }))}
+      />
+    </div>
+  )
+}
+
 export default function ImpostazioniPage() {
   const { user } = useAuth()
   const [impostazioni, setImpostazioni] = useState({ nome_utente: '', indirizzo_fornitura: '', regione: '', zona_mercato: 'NORD' })
@@ -102,16 +116,7 @@ export default function ImpostazioniPage() {
     loadData()
   }
 
-  const FC = ({ label, name, type = 'text', step, placeholder, hint }) => (
-    <div className="form-group">
-      <label className="form-label">{label}{hint && <span className="text-muted" style={{ fontWeight: 400 }}> ({hint})</span>}</label>
-      <input
-        className="form-input" type={type} step={step} placeholder={placeholder}
-        value={formContratto[name] ?? ''}
-        onChange={e => setFormContratto(p => ({ ...p, [name]: e.target.value }))}
-      />
-    </div>
-  )
+
 
   return (
     <div className="flex-col gap-24">
@@ -249,8 +254,8 @@ export default function ImpostazioniPage() {
               <div>
                 <div className="form-section-title">Fornitore</div>
                 <div className="form-grid mt-16">
-                  <FC label="Fornitore *" name="fornitore" placeholder="es. Enel Energia" />
-                  <FC label="Nome Offerta *" name="nome_offerta" placeholder="es. Semplice Luce" />
+                  <FC label="Fornitore *" name="fornitore" placeholder="es. Enel Energia"  formContratto={formContratto} setFormContratto={setFormContratto} />
+                  <FC label="Nome Offerta *" name="nome_offerta" placeholder="es. Semplice Luce"  formContratto={formContratto} setFormContratto={setFormContratto} />
                 </div>
               </div>
 
@@ -269,19 +274,19 @@ export default function ImpostazioniPage() {
                   <FC label="Fascia F1" name="prezzo_f1" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" />
                   <FC label="Fascia F2" name="prezzo_f2" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" />
                   <FC label="Fascia F3" name="prezzo_f3" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" />
-                  <FC label="Monorario" name="prezzo_monorario" type="number" step="0.000001" placeholder="0.000000" hint="se monorario" />
+                  <FC label="Monorario" name="prezzo_monorario" type="number" step="0.000001" placeholder="0.000000" hint="se monorario"  formContratto={formContratto} setFormContratto={setFormContratto} />
                   {formContratto.tipo_mercato === 'indicizzato_pun' && (
                     <FC label="Spread PUN" name="spread_pun" type="number" step="0.000001" placeholder="0.010000" hint="€/kWh da aggiungere al PUN" />
                   )}
-                  <FC label="Potenza Impegnata (kW)" name="potenza_impegnata" type="number" step="0.01" placeholder="3.00" />
+                  <FC label="Potenza Impegnata (kW)" name="potenza_impegnata" type="number" step="0.01" placeholder="3.00"  formContratto={formContratto} setFormContratto={setFormContratto} />
                 </div>
               </div>
 
               <div>
                 <div className="form-section-title">Validità</div>
                 <div className="form-grid-2 mt-16">
-                  <FC label="Data Inizio" name="data_inizio" type="date" />
-                  <FC label="Data Fine" name="data_fine" type="date" />
+                  <FC label="Data Inizio" name="data_inizio" type="date"  formContratto={formContratto} setFormContratto={setFormContratto} />
+                  <FC label="Data Fine" name="data_fine" type="date"  formContratto={formContratto} setFormContratto={setFormContratto} />
                 </div>
               </div>
 
