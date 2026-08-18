@@ -10,7 +10,7 @@ const supabase = createClient(
 )
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'voltix@tuodominio.com'
+const FROM_EMAIL = 'onboarding@resend.dev'
 
 export default async function handler(req, res) {
   // Verifica autorizzazione cron (Vercel invia questo header)
