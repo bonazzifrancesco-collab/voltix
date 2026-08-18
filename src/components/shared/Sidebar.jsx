@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../lib/AuthContext'
 import {
   Zap, LayoutDashboard, FileText, BarChart3,
-  TrendingUp, Sparkles, Settings, LogOut
+  TrendingUp, Sparkles, Settings, LogOut, Calculator
 } from 'lucide-react'
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { to: '/bollette', icon: FileText, label: 'Bollette' },
   { to: '/consumi', icon: BarChart3, label: 'Consumi & Costi' },
   { to: '/pun', icon: TrendingUp, label: 'Andamento PUN' },
+  { to: '/simulatore', icon: Calculator, label: 'Simulatore Offerte' },
   { to: '/analisi', icon: Sparkles, label: 'Analisi AI Mercato' },
 ]
 
