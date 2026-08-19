@@ -676,13 +676,13 @@ export default function SimulatorePage() {
               </div>
               <div className="form-grid">
                 {formOfferta.tipo_mercato === 'monorario' ? (
-                  <FS label="Prezzo Monorario (€/kWh)" name="prezzo_monorario" placeholder="0.000000" />
+                  <FS label="Prezzo Monorario (€/kWh)" name="prezzo_monorario" placeholder="0.000000" formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
                 ) : formOfferta.tipo_mercato === 'indicizzato_pun' ? (
-                  <FS label="Spread sul PUN (€/kWh)" name="spread_pun" placeholder="0.010000" hint="aggiunto al PUN" />
+                  <FS label="Spread sul PUN (€/kWh)" name="spread_pun" placeholder="0.010000" hint="aggiunto al PUN" formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
                 ) : (<>
-                  <FS label="Prezzo F1 — Punta (€/kWh)" name="prezzo_f1" placeholder="0.000000" />
-                  <FS label="Prezzo F2 — Intermedia (€/kWh)" name="prezzo_f2" placeholder="0.000000" />
-                  <FS label="Prezzo F3 — Valle (€/kWh)" name="prezzo_f3" placeholder="0.000000" />
+                  <FS label="Prezzo F1 — Punta (€/kWh)" name="prezzo_f1" placeholder="0.000000" formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
+                  <FS label="Prezzo F2 — Intermedia (€/kWh)" name="prezzo_f2" placeholder="0.000000" formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
+                  <FS label="Prezzo F3 — Valle (€/kWh)" name="prezzo_f3" placeholder="0.000000" formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
                 </>)}
                 <FS label="Perdite di Rete (%)" name="perdite_rete_perc" step="0.1" placeholder="10.0" hint="standard ~10%"  formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
               </div>
@@ -693,9 +693,9 @@ export default function SimulatorePage() {
                 Costi fissi annui del fornitore separati dalle tariffe ARERA (già incluse sopra).
               </div>
               <div className="form-grid">
-                <FS label="Commercializzazione (€/anno)" name="corrispettivo_commercializzazione" step="0.01" placeholder="0.00" />
-                <FS label="Misura Contatore (€/anno)" name="corrispettivo_misura" step="0.01" placeholder="0.00" />
-                <FS label="Altri Corrispettivi Fissi (€/anno)" name="altri_corrispettivi_fissi" step="0.01" placeholder="0.00" />
+                <FS label="Commercializzazione (€/anno)" name="corrispettivo_commercializzazione" step="0.01" placeholder="0.00" formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
+                <FS label="Misura Contatore (€/anno)" name="corrispettivo_misura" step="0.01" placeholder="0.00" formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
+                <FS label="Altri Corrispettivi Fissi (€/anno)" name="altri_corrispettivi_fissi" step="0.01" placeholder="0.00" formOfferta={formOfferta} setFormOfferta={setFormOfferta} />
               </div>
 
               <div className="form-group">

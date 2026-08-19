@@ -403,7 +403,7 @@ export default function BollettePage() {
                   <div>
                     <div className="form-section-title">Extra</div>
                     <div className="form-grid mt-16">
-                      <Field label="PUN Medio Periodo (€/MWh)" name="pun_medio_periodo" type="number" step="0.0001" />
+                      <Field label="PUN Medio Periodo (€/MWh)" name="pun_medio_periodo" type="number" step="0.0001" form={form} setForm={setForm} />
                       <div className="form-group" style={{ gridColumn: 'span 2' }}>
                         <label className="form-label">Note</label>
                         <textarea className="form-textarea" value={form.note} onChange={e => setForm(p => ({ ...p, note: e.target.value }))} />

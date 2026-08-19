@@ -271,12 +271,12 @@ export default function ImpostazioniPage() {
               <div>
                 <div className="form-section-title">Prezzi (€/kWh)</div>
                 <div className="form-grid mt-16">
-                  <FC label="Fascia F1" name="prezzo_f1" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" />
-                  <FC label="Fascia F2" name="prezzo_f2" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" />
-                  <FC label="Fascia F3" name="prezzo_f3" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" />
+                  <FC label="Fascia F1" name="prezzo_f1" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" formContratto={formContratto} setFormContratto={setFormContratto} />
+                  <FC label="Fascia F2" name="prezzo_f2" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" formContratto={formContratto} setFormContratto={setFormContratto} />
+                  <FC label="Fascia F3" name="prezzo_f3" type="number" step="0.000001" placeholder="0.000000" hint="€/kWh" formContratto={formContratto} setFormContratto={setFormContratto} />
                   <FC label="Monorario" name="prezzo_monorario" type="number" step="0.000001" placeholder="0.000000" hint="se monorario"  formContratto={formContratto} setFormContratto={setFormContratto} />
                   {formContratto.tipo_mercato === 'indicizzato_pun' && (
-                    <FC label="Spread PUN" name="spread_pun" type="number" step="0.000001" placeholder="0.010000" hint="€/kWh da aggiungere al PUN" />
+                    <FC label="Spread PUN" name="spread_pun" type="number" step="0.000001" placeholder="0.010000" hint="€/kWh da aggiungere al PUN" formContratto={formContratto} setFormContratto={setFormContratto} />
                   )}
                   <FC label="Potenza Impegnata (kW)" name="potenza_impegnata" type="number" step="0.01" placeholder="3.00"  formContratto={formContratto} setFormContratto={setFormContratto} />
                 </div>
