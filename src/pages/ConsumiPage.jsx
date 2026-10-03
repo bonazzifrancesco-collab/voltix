@@ -49,22 +49,34 @@ export default function ConsumiPage() {
     const mese = new Date(b.periodo_inizio).getMonth()
     const kwh = b.kwh_totale || 0
     const importo = b.importo_totale || 0
+
+    // Prezzo medio SOLO materia energia (F1+F2+F3), ponderato sui kWh di ciascuna fascia —
+    // questo è il valore confrontabile con il PUN, non il prezzo tutto incluso
+    const kwhF1 = b.kwh_f1 || 0
+    const kwhF2 = b.kwh_f2 || 0
+    const kwhF3 = b.kwh_f3 || 0
+    const pF1 = b.prezzo_f1 || 0
+    const pF2 = b.prezzo_f2 || 0
+    const pF3 = b.prezzo_f3 || 0
+    const kwhConPrezzo = (pF1 > 0 ? kwhF1 : 0) + (pF2 > 0 ? kwhF2 : 0) + (pF3 > 0 ? kwhF3 : 0)
+    const costoEnergiaSolo = (kwhF1 * pF1) + (kwhF2 * pF2) + (kwhF3 * pF3)
+    const prezzoEnergiaMedio = kwhConPrezzo > 0 ? (costoEnergiaSolo / kwhConPrezzo) * 100 : null // c€/kWh, solo energia
+
     return {
       name: MESI[mese],
       meseNum: mese + 1,
-      kwhF1: b.kwh_f1 || 0,
-      kwhF2: b.kwh_f2 || 0,
-      kwhF3: b.kwh_f3 || 0,
+      kwhF1, kwhF2, kwhF3,
       kwhTot: kwh,
       importo,
       matPrima: b.costo_materia_prima || 0,
       trasporto: b.costo_trasporto || 0,
       oneri: b.costo_oneri_sistema || 0,
       iva: b.costo_iva || 0,
-      prezzoMedio: kwh > 0 ? (importo / kwh) * 100 : 0, // c€/kWh
-      prezzoF1: b.prezzo_f1 ? b.prezzo_f1 * 100 : null,
-      prezzoF2: b.prezzo_f2 ? b.prezzo_f2 * 100 : null,
-      prezzoF3: b.prezzo_f3 ? b.prezzo_f3 * 100 : null,
+      prezzoMedio: kwh > 0 ? (importo / kwh) * 100 : 0, // c€/kWh TUTTO INCLUSO — solo per altri usi (tabella dettaglio)
+      prezzoEnergiaMedio, // c€/kWh SOLA ENERGIA — da confrontare col PUN
+      prezzoF1: pF1 ? pF1 * 100 : null,
+      prezzoF2: pF2 ? pF2 * 100 : null,
+      prezzoF3: pF3 ? pF3 * 100 : null,
     }
   })
 
@@ -91,15 +103,15 @@ export default function ConsumiPage() {
     { name: 'IVA', value: statsAnno.costoMedioIva, color: 'var(--text-muted)', perc: statsAnno.totImporto > 0 ? (statsAnno.costoMedioIva / statsAnno.totImporto) * 100 : 0 },
   ].filter(x => x.value > 0) : []
 
-  // Correlazione PUN vs prezzo pagato
+  // Correlazione PUN vs prezzo SOLA ENERGIA pagato (non il prezzo tutto incluso)
   const correlazione = datiMensili.map(d => {
     const punMese = pun.find(p => p.anno === annoSel && p.mese === d.meseNum)
     return {
       name: d.name,
-      prezzoMedio: d.prezzoMedio,
+      prezzoEnergia: d.prezzoEnergiaMedio,
       punCent: punMese ? (punMese.pun_medio / 10) : null, // converto €/MWh → c€/kWh
     }
-  }).filter(d => d.punCent !== null)
+  }).filter(d => d.punCent !== null && d.prezzoEnergia !== null)
 
   if (loading) return <div className="loading-overlay"><div className="spinner" style={{ width: 28, height: 28 }} /></div>
 
@@ -412,7 +424,10 @@ export default function ConsumiPage() {
         <>
           <div className="card">
             <div className="card-header">
-              <div className="card-title"><span className="card-title-icon" style={{ background: 'var(--cyan)' }} />Prezzo Effettivo vs PUN (c€/kWh)</div>
+              <div className="card-title"><span className="card-title-icon" style={{ background: 'var(--cyan)' }} />Prezzo Energia (sola materia prima) vs PUN (c€/kWh)</div>
+            </div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: 12, lineHeight: 1.6 }}>
+              Confronto tra il PUN di mercato e il prezzo <strong style={{ color: 'var(--amber)' }}>della sola energia</strong> pagato in bolletta (F1/F2/F3), al netto di trasporto, oneri, accise e IVA — richiede che i campi prezzo F1/F2/F3 siano compilati nelle bollette.
             </div>
             {correlazione.length > 0 ? (
               <ResponsiveContainer width="100%" height={260}>
@@ -422,13 +437,13 @@ export default function ConsumiPage() {
                   <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10, fontFamily: 'var(--font-mono)' }} axisLine={false} tickLine={false} unit=" c€" />
                   <Tooltip content={<TT />} />
                   <Legend wrapperStyle={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', paddingTop: 12 }} />
-                  <Line type="monotone" dataKey="prezzoMedio" name="Prezzo Pagato" stroke="var(--amber)" strokeWidth={2.5} dot={{ fill: 'var(--amber)', r: 4 }} />
+                  <Line type="monotone" dataKey="prezzoEnergia" name="Prezzo Energia Pagato" stroke="var(--amber)" strokeWidth={2.5} dot={{ fill: 'var(--amber)', r: 4 }} />
                   <Line type="monotone" dataKey="punCent" name="PUN Mercato" stroke="var(--green)" strokeWidth={2} strokeDasharray="5 3" dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
               <div className="empty-state" style={{ padding: 40 }}>
-                <div className="empty-state-desc">Dati PUN non disponibili per l'anno selezionato</div>
+                <div className="empty-state-desc">Dati insufficienti: servono sia il PUN dell'anno selezionato sia i prezzi F1/F2/F3 nelle bollette</div>
               </div>
             )}
           </div>
